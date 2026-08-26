@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --wa-bg: #efeae2;
+  --wa-green: #075e54;
+  --wa-accent: #128C7E;
+  --wa-bubble-me: #dcf8c6;
+  --wa-bubble-them: #ffffff;
+  --wa-text: #111b21;
+  --wa-muted: #667781;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--wa-text);
+}

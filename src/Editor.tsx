@@ -85,11 +85,53 @@ export function Timeline({ messages, selectedId, onSelect, onMove, onDelete }: {
   return <section className="panel"><div className="panel-heading"><div><span className="eyebrow">Sequence</span><h2>Conversation</h2></div><span className="count-pill">{messages.length}</span></div><div className="max-h-[760px] space-y-2 overflow-y-auto p-3">{messages.map((message, index) => <button key={message.id} type="button" onClick={() => onSelect(message.id)} className={classes("group flex w-full items-center gap-2 rounded-xl border p-2 text-left transition", selectedId === message.id ? "border-emerald-400 bg-emerald-50" : "border-slate-200 bg-white hover:border-slate-300")}><span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-slate-100">{messageTypeLabels[message.type].emoji}</span><span className="min-w-0 flex-1"><span className="block truncate text-[11px] font-semibold">{messageTypeLabels[message.type].label}</span><span className="block truncate text-[10px] text-slate-500">{message.from === "me" ? "Customer" : "Business"} · {message.time}</span></span><span className="flex opacity-20 transition group-hover:opacity-100"><button type="button" aria-label="Move up" disabled={index === 0} className="timeline-icon" onClick={(event) => { event.stopPropagation(); onMove(index, -1); }}><ChevronUp size={13} /></button><button type="button" aria-label="Move down" disabled={index === messages.length - 1} className="timeline-icon" onClick={(event) => { event.stopPropagation(); onMove(index, 1); }}><ChevronDown size={13} /></button><button type="button" aria-label="Delete message" className="timeline-icon text-red-600" onClick={(event) => { event.stopPropagation(); onDelete(message.id); }}><Trash2 size={13} /></button></span></button>)}</div></section>;
 }
 
+type AssetMap = Record<string, string>;
+
+function compactAssets(value: unknown) {
+  const assets: AssetMap = {};
+  const knownAssets = new Map<string, string>();
+  let assetNumber = 0;
+  const visit = (current: unknown): unknown => {
+    if (typeof current === "string" && current.startsWith("data:")) {
+      const knownToken = knownAssets.get(current);
+      if (knownToken) return knownToken;
+      const mediaKind = current.match(/^data:([^/;]+)/)?.[1] ?? "media";
+      const token = `asset://${mediaKind}/${++assetNumber}`;
+      assets[token] = current;
+      knownAssets.set(current, token);
+      return token;
+    }
+    if (Array.isArray(current)) return current.map(visit);
+    if (current && typeof current === "object") return Object.fromEntries(Object.entries(current as Record<string, unknown>).map(([key, item]) => [key, visit(item)]));
+    return current;
+  };
+  return { raw: JSON.stringify(visit(value), null, 2), assets };
+}
+
+function expandAssets(raw: string, assets: AssetMap) {
+  const parsed: unknown = JSON.parse(raw);
+  const visit = (current: unknown): unknown => {
+    if (typeof current === "string" && current.startsWith("asset://")) {
+      const asset = assets[current];
+      if (!asset) throw new Error(`Unknown asset placeholder: ${current}. Use Refresh to restore it.`);
+      return asset;
+    }
+    if (Array.isArray(current)) return current.map(visit);
+    if (current && typeof current === "object") return Object.fromEntries(Object.entries(current as Record<string, unknown>).map(([key, item]) => [key, visit(item)]));
+    return current;
+  };
+  return JSON.stringify(visit(parsed), null, 2);
+}
+
 export function JsonEditor({ state, onApply }: { state: PersistedState; onApply: (raw: string) => void }) {
-  const [raw, setRaw] = useState(() => JSON.stringify(state, null, 2));
+  const initial = compactAssets(state);
+  const [raw, setRaw] = useState(initial.raw);
+  const [assets, setAssets] = useState<AssetMap>(initial.assets);
   const [notice, setNotice] = useState("");
-  const refresh = () => { setRaw(JSON.stringify(state, null, 2)); setNotice("Editor refreshed from the current conversation."); };
-  const download = () => { const blob = new Blob([raw], { type: "application/json" }); const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = "whatsapp-conversation.json"; anchor.click(); URL.revokeObjectURL(url); };
-  return <section className="panel"><div className="panel-heading"><div><span className="eyebrow">Advanced</span><h2>JSON schema editor</h2></div></div><div className="space-y-3 p-4"><p className="text-[11px] leading-5 text-slate-500">Edit the complete conversation as JSON. Message IDs must be unique; valid message types are listed in the message editor.</p><textarea aria-label="Conversation JSON" spellCheck={false} className="h-[470px] w-full resize-y rounded-xl border border-slate-800 bg-slate-950 p-3 font-mono text-[10px] leading-4 text-emerald-300 outline-none focus:ring-2 focus:ring-emerald-300" value={raw} onChange={(event) => { setRaw(event.target.value); setNotice(""); }} /><div className="grid grid-cols-2 gap-2"><button type="button" className="secondary-button" onClick={refresh}>Refresh</button><button type="button" className="secondary-button" onClick={async () => { await navigator.clipboard.writeText(raw); setNotice("JSON copied."); }}><Copy size={14} /> Copy</button><button type="button" className="secondary-button" onClick={download}><Download size={14} /> Download</button><label className="secondary-button cursor-pointer"><Upload size={14} /> Import<input className="sr-only" type="file" accept="application/json,.json" onChange={async (event) => { const file = event.target.files?.[0]; if (file) setRaw(await file.text()); }} /></label></div><button type="button" className="primary-button w-full" onClick={() => { try { onApply(raw); setNotice("Conversation applied successfully."); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON."); } }}>Validate & apply JSON</button>{notice && <div className={classes("rounded-xl px-3 py-2 text-[11px]", notice.includes("success") || notice.includes("copied") || notice.includes("refreshed") ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-800")}>{notice}</div>}</div></section>;
+  const refresh = () => { const next = compactAssets(state); setRaw(next.raw); setAssets(next.assets); setNotice("Editor refreshed from the current conversation."); };
+  const getFullJson = () => expandAssets(raw, assets);
+  const download = () => { const blob = new Blob([getFullJson()], { type: "application/json" }); const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = "whatsapp-conversation.json"; anchor.click(); URL.revokeObjectURL(url); };
+  const importJson = async (file: File) => { const text = await file.text(); const next = compactAssets(JSON.parse(text)); setRaw(next.raw); setAssets(next.assets); setNotice("JSON imported with media links compacted."); };
+  return <section className="panel"><div className="panel-heading"><div><span className="eyebrow">Advanced</span><h2>JSON schema editor</h2></div></div><div className="space-y-3 p-4"><p className="text-[11px] leading-5 text-slate-500">Edit the complete conversation as JSON. Uploaded media is shown as a short <code className="rounded bg-slate-100 px-1 text-emerald-700">asset://image/1</code> placeholder; its full data stays intact and is restored when you apply, copy, or download.</p><textarea aria-label="Conversation JSON" spellCheck={false} className="h-[470px] w-full resize-y rounded-xl border border-slate-800 bg-slate-950 p-3 font-mono text-[10px] leading-4 text-emerald-300 outline-none focus:ring-2 focus:ring-emerald-300" value={raw} onChange={(event) => { setRaw(event.target.value); setNotice(""); }} /><div className="grid grid-cols-2 gap-2"><button type="button" className="secondary-button" onClick={refresh}>Refresh</button><button type="button" className="secondary-button" onClick={async () => { try { await navigator.clipboard.writeText(getFullJson()); setNotice("Full JSON copied with media included."); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON."); } }}><Copy size={14} /> Copy full JSON</button><button type="button" className="secondary-button" onClick={() => { try { download(); setNotice("Full JSON downloaded with media included."); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON."); } }}><Download size={14} /> Download full JSON</button><label className="secondary-button cursor-pointer"><Upload size={14} /> Import<input className="sr-only" type="file" accept="application/json,.json" onChange={async (event) => { const file = event.target.files?.[0]; if (file) { try { await importJson(file); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON file."); } } }} /></label></div><button type="button" className="primary-button w-full" onClick={() => { try { onApply(getFullJson()); setNotice("Conversation applied successfully; media data was preserved."); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON."); } }}>Validate & apply JSON</button>{notice && <div className={classes("rounded-xl px-3 py-2 text-[11px]", notice.includes("success") || notice.includes("copied") || notice.includes("downloaded") || notice.includes("refreshed") || notice.includes("imported") ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-800")}>{notice}</div>}</div></section>;
 }
 

@@ -15,52 +15,26 @@
       "text": "{{TriggerPhrase}}"
     },
     {
-      "id": "menu-options",
-      "type": "list",
+      "id": "menu-options-one",
+      "type": "text",
       "from": "them",
       "time": "16:01",
       "status": "read",
-      "prompt": "Hello! Thank you for contacting {{BrandName}}. How can we help you today?",
-      "sectionTitle": "Main menu",
-      "buttonLabel": "View all options",
-      "items": [
-        {
-          "id": "menu-products",
-          "emoji": "🛍️",
-          "title": "Explore our products",
-          "description": "Discover featured products and offers"
-        },
-        {
-          "id": "menu-assistance",
-          "emoji": "🎧",
-          "title": "I need assistance",
-          "description": "Contact our customer support team"
-        },
-        {
-          "id": "menu-brand",
-          "emoji": "ℹ️",
-          "title": "About {{BrandName}}",
-          "description": "Learn more about our brand"
-        },
-        {
-          "id": "menu-policies",
-          "emoji": "📄",
-          "title": "Policies",
-          "description": "Privacy, terms, and data policies"
-        },
-        {
-          "id": "menu-subscribe",
-          "emoji": "✉️",
-          "title": "Subscribe",
-          "description": "Receive personalized news and offers"
-        }
-      ]
+      "text": "Hello! Thank you for contacting {{BrandName}}. Please reply with the number of the option you would like to explore:\n\n1️⃣ Explore our products\n2️⃣ I need assistance\n3️⃣ Learn more about {{BrandName}}\n4️⃣ View our policies\n5️⃣ Subscribe to news and offers"
+    },
+    {
+      "id": "menu-select-one",
+      "type": "text",
+      "from": "me",
+      "time": "16:02",
+      "status": "read",
+      "text": "1"
     },
     {
       "id": "menu-products-response",
       "type": "carousel",
       "from": "them",
-      "time": "16:02",
+      "time": "16:03",
       "status": "read",
       "intro": "Here are three products selected for you, {{FirstName}}:",
       "cards": [
@@ -94,20 +68,44 @@
       "id": "menu-products-followup",
       "type": "quick_reply",
       "from": "them",
-      "time": "16:03",
+      "time": "16:04",
       "status": "read",
       "prompt": "Is there anything else we can help you with?",
       "options": [
         "↩️ Back to the menu",
         "✅ I don't need anything else"
       ],
-      "selectedIndex": null
+      "selectedIndex": 0
+    },
+    {
+      "id": "menu-products-back",
+      "type": "text",
+      "from": "me",
+      "time": "16:05",
+      "status": "read",
+      "text": "Back to the menu"
+    },
+    {
+      "id": "menu-options-two",
+      "type": "text",
+      "from": "them",
+      "time": "16:06",
+      "status": "read",
+      "text": "Please select another option:\n\n1️⃣ Explore our products\n2️⃣ I need assistance\n3️⃣ Learn more about {{BrandName}}\n4️⃣ View our policies\n5️⃣ Subscribe to news and offers"
+    },
+    {
+      "id": "menu-select-two",
+      "type": "text",
+      "from": "me",
+      "time": "16:07",
+      "status": "read",
+      "text": "2"
     },
     {
       "id": "menu-support-response",
       "type": "cta",
       "from": "them",
-      "time": "16:04",
+      "time": "16:08",
       "status": "read",
       "text": "Our customer support team will be happy to assist you. Call us during {{SupportOpeningHours}}.",
       "buttons": [
@@ -123,20 +121,44 @@
       "id": "menu-support-followup",
       "type": "quick_reply",
       "from": "them",
-      "time": "16:05",
+      "time": "16:09",
       "status": "read",
-      "prompt": "Would you like to return to the main menu?",
+      "prompt": "Is there anything else we can help you with?",
       "options": [
         "↩️ Back to the menu",
         "✅ I don't need anything else"
       ],
-      "selectedIndex": null
+      "selectedIndex": 0
+    },
+    {
+      "id": "menu-support-back",
+      "type": "text",
+      "from": "me",
+      "time": "16:10",
+      "status": "read",
+      "text": "Back to the menu"
+    },
+    {
+      "id": "menu-options-three",
+      "type": "text",
+      "from": "them",
+      "time": "16:11",
+      "status": "read",
+      "text": "Please select another option:\n\n1️⃣ Explore our products\n2️⃣ I need assistance\n3️⃣ Learn more about {{BrandName}}\n4️⃣ View our policies\n5️⃣ Subscribe to news and offers"
+    },
+    {
+      "id": "menu-select-three",
+      "type": "text",
+      "from": "me",
+      "time": "16:12",
+      "status": "read",
+      "text": "3"
     },
     {
       "id": "menu-brand-response",
       "type": "text",
       "from": "them",
-      "time": "16:06",
+      "time": "16:13",
       "status": "read",
       "text": "{{BrandDescription}}\n\nLearn more about our purpose and commitments at {{BrandWebsiteUrl}}."
     },
@@ -144,51 +166,164 @@
       "id": "menu-brand-followup",
       "type": "quick_reply",
       "from": "them",
-      "time": "16:07",
+      "time": "16:14",
       "status": "read",
-      "prompt": "Would you like to return to the main menu?",
+      "prompt": "Is there anything else we can help you with?",
       "options": [
         "↩️ Back to the menu",
         "✅ I don't need anything else"
       ],
-      "selectedIndex": null
+      "selectedIndex": 0
+    },
+    {
+      "id": "menu-brand-back",
+      "type": "text",
+      "from": "me",
+      "time": "16:15",
+      "status": "read",
+      "text": "Back to the menu"
+    },
+    {
+      "id": "menu-options-four",
+      "type": "text",
+      "from": "them",
+      "time": "16:16",
+      "status": "read",
+      "text": "Please select another option:\n\n1️⃣ Explore our products\n2️⃣ I need assistance\n3️⃣ Learn more about {{BrandName}}\n4️⃣ View our policies\n5️⃣ Subscribe to news and offers"
+    },
+    {
+      "id": "menu-select-four",
+      "type": "text",
+      "from": "me",
+      "time": "16:17",
+      "status": "read",
+      "text": "4"
     },
     {
       "id": "menu-policies-response",
       "type": "link",
       "from": "them",
-      "time": "16:08",
+      "time": "16:18",
       "status": "read",
       "url": "{{PoliciesUrl}}",
       "title": "{{BrandName}} policies",
-      "description": "Review our privacy policy, Terms and Conditions, cookie policy, and data-protection information.",
+      "description": "Review our Privacy Policy, Terms and Conditions, cookie policy, and data-protection information.",
       "thumbnailUrl": "{{PoliciesImageUrl}}"
     },
     {
       "id": "menu-policies-followup",
       "type": "quick_reply",
       "from": "them",
-      "time": "16:09",
+      "time": "16:19",
       "status": "read",
-      "prompt": "Would you like to return to the main menu?",
+      "prompt": "Is there anything else we can help you with?",
       "options": [
         "↩️ Back to the menu",
         "✅ I don't need anything else"
       ],
-      "selectedIndex": null
+      "selectedIndex": 0
     },
     {
-      "id": "menu-subscribe-response",
+      "id": "menu-policies-back",
+      "type": "text",
+      "from": "me",
+      "time": "16:20",
+      "status": "read",
+      "text": "Back to the menu"
+    },
+    {
+      "id": "menu-options-five",
+      "type": "text",
+      "from": "them",
+      "time": "16:21",
+      "status": "read",
+      "text": "Please select another option:\n\n1️⃣ Explore our products\n2️⃣ I need assistance\n3️⃣ Learn more about {{BrandName}}\n4️⃣ View our policies\n5️⃣ Subscribe to news and offers"
+    },
+    {
+      "id": "menu-select-five",
+      "type": "text",
+      "from": "me",
+      "time": "16:22",
+      "status": "read",
+      "text": "5"
+    },
+    {
+      "id": "menu-subscribe-consent",
       "type": "quick_reply",
       "from": "them",
-      "time": "16:10",
+      "time": "16:23",
       "status": "read",
-      "prompt": "Great! We can guide you through a short subscription flow to receive personalized news and offers. Would you like to begin?",
+      "prompt": "Hello! Thank you for connecting with {{BrandName}}. Would you like to receive personalized news, recipes, offers, and campaign updates? Please review our Terms and Conditions before subscribing: {{TermsAndConditionsUrl}}",
       "options": [
-        "✉️ Start subscription",
-        "↩️ Back to the menu"
+        "✅ Yes, I agree",
+        "No, thank you"
       ],
-      "selectedIndex": null
+      "selectedIndex": 0
+    },
+    {
+      "id": "menu-subscribe-answer",
+      "type": "text",
+      "from": "me",
+      "time": "16:24",
+      "status": "read",
+      "text": "Yes, I agree ✅"
+    },
+    {
+      "id": "menu-subscribe-flow",
+      "type": "flow",
+      "from": "them",
+      "time": "16:25",
+      "status": "read",
+      "title": "Complete your profile",
+      "body": "Excellent! Please share a few details so we can personalize future communications.",
+      "fields": [
+        {
+          "id": "menu-subscribe-first-name",
+          "label": "First name",
+          "required": true,
+          "fieldType": "text",
+          "placeholder": "{{FirstName}}"
+        },
+        {
+          "id": "menu-subscribe-last-name",
+          "label": "Last name",
+          "required": true,
+          "fieldType": "text",
+          "placeholder": "{{LastName}}"
+        },
+        {
+          "id": "menu-subscribe-email",
+          "label": "Email address",
+          "required": true,
+          "fieldType": "email",
+          "placeholder": "{{EmailAddress}}"
+        },
+        {
+          "id": "menu-subscribe-date-of-birth",
+          "label": "Date of birth",
+          "required": true,
+          "fieldType": "date",
+          "placeholder": "{{DateOfBirth}}"
+        }
+      ],
+      "submitLabel": "Submit details",
+      "submitted": true
+    },
+    {
+      "id": "menu-subscribe-submitted",
+      "type": "text",
+      "from": "me",
+      "time": "16:26",
+      "status": "read",
+      "text": "I've submitted my details."
+    },
+    {
+      "id": "menu-subscribe-thanks",
+      "type": "text",
+      "from": "them",
+      "time": "16:27",
+      "status": "read",
+      "text": "Thank you for your interest, {{FirstName}}! Your preferences have been saved, and you will begin receiving relevant marketing communications soon. You can update your preferences or unsubscribe at any time."
     }
   ]
 }

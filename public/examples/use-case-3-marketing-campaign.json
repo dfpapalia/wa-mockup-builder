@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "chatMeta": {
+    "contactName": "{{BrandName}}",
+    "statusLine": "Official business account"
+  },
+  "selectedMessageId": "campaign-visual",
+  "messages": [
+    {
+      "id": "campaign-visual",
+      "type": "media_image",
+      "from": "them",
+      "time": "14:00",
+      "status": "read",
+      "dataUrl": "{{CampaignImageUrl}}",
+      "caption": "{{CampaignHeadline}}"
+    },
+    {
+      "id": "campaign-message",
+      "type": "cta",
+      "from": "them",
+      "time": "14:00",
+      "status": "read",
+      "text": "Hello {{FirstName}}! {{CampaignBody}}\n\nOffer available until {{CampaignEndDate}}. Terms apply: {{TermsAndConditionsUrl}}",
+      "buttons": [
+        {
+          "id": "campaign-cta",
+          "kind": "url",
+          "label": "{{CampaignCtaLabel}}",
+          "value": "{{CampaignLandingPageUrl}}"
+        }
+      ]
+    }
+  ]
+}
+

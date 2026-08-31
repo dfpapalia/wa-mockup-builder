@@ -4,6 +4,12 @@ import { messageTypeLabels, normalizeTime, uid, type CarouselCard, type CtaButto
 
 const EMOJIS = ["😀", "😂", "🥰", "👍", "🙏", "🎉", "✨", "🔥", "✅", "❌", "📱", "📦", "🛍️", "🔗", "📞", "🚀"];
 const classes = (...items: Array<string | false | undefined>) => items.filter(Boolean).join(" ");
+const USE_CASE_TEMPLATES = [
+  { path: "examples/use-case-1-first-party-data.json", label: "1 · First-party data acquisition" },
+  { path: "examples/use-case-2-progressive-profiling.json", label: "2 · Progressive profiling" },
+  { path: "examples/use-case-3-marketing-campaign.json", label: "3 · Marketing campaign" },
+  { path: "examples/use-case-4-menu-bot.json", label: "4 · Menu-based bot" },
+];
 
 type TextFieldProps = {
   label: string;
@@ -128,10 +134,44 @@ export function JsonEditor({ state, onApply }: { state: PersistedState; onApply:
   const [raw, setRaw] = useState(initial.raw);
   const [assets, setAssets] = useState<AssetMap>(initial.assets);
   const [notice, setNotice] = useState("");
+  const [templatePath, setTemplatePath] = useState(USE_CASE_TEMPLATES[0]?.path ?? "");
   const refresh = () => { const next = compactAssets(state); setRaw(next.raw); setAssets(next.assets); setNotice("Editor refreshed from the current conversation."); };
   const getFullJson = () => expandAssets(raw, assets);
   const download = () => { const blob = new Blob([getFullJson()], { type: "application/json" }); const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = "whatsapp-conversation.json"; anchor.click(); URL.revokeObjectURL(url); };
   const importJson = async (file: File) => { const text = await file.text(); const next = compactAssets(JSON.parse(text)); setRaw(next.raw); setAssets(next.assets); setNotice("JSON imported with media links compacted."); };
-  return <section className="panel"><div className="panel-heading"><div><span className="eyebrow">Advanced</span><h2>JSON schema editor</h2></div></div><div className="space-y-3 p-4"><p className="text-[11px] leading-5 text-slate-500">Edit the complete conversation as JSON. Uploaded media is shown as a short <code className="rounded bg-slate-100 px-1 text-emerald-700">asset://image/1</code> placeholder; its full data stays intact and is restored when you apply, copy, or download.</p><textarea aria-label="Conversation JSON" spellCheck={false} className="h-[470px] w-full resize-y rounded-xl border border-slate-800 bg-slate-950 p-3 font-mono text-[10px] leading-4 text-emerald-300 outline-none focus:ring-2 focus:ring-emerald-300" value={raw} onChange={(event) => { setRaw(event.target.value); setNotice(""); }} /><div className="grid grid-cols-2 gap-2"><button type="button" className="secondary-button" onClick={refresh}>Refresh</button><button type="button" className="secondary-button" onClick={async () => { try { await navigator.clipboard.writeText(getFullJson()); setNotice("Full JSON copied with media included."); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON."); } }}><Copy size={14} /> Copy full JSON</button><button type="button" className="secondary-button" onClick={() => { try { download(); setNotice("Full JSON downloaded with media included."); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON."); } }}><Download size={14} /> Download full JSON</button><label className="secondary-button cursor-pointer"><Upload size={14} /> Import<input className="sr-only" type="file" accept="application/json,.json" onChange={async (event) => { const file = event.target.files?.[0]; if (file) { try { await importJson(file); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON file."); } } }} /></label></div><button type="button" className="primary-button w-full" onClick={() => { try { onApply(getFullJson()); setNotice("Conversation applied successfully; media data was preserved."); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON."); } }}>Validate & apply JSON</button>{notice && <div className={classes("rounded-xl px-3 py-2 text-[11px]", notice.includes("success") || notice.includes("copied") || notice.includes("downloaded") || notice.includes("refreshed") || notice.includes("imported") ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-800")}>{notice}</div>}</div></section>;
+  const loadTemplate = async () => {
+    const response = await fetch(`${import.meta.env.BASE_URL}${templatePath}`);
+    if (!response.ok) throw new Error("The selected template could not be loaded.");
+    const next = compactAssets(await response.json());
+    setRaw(next.raw);
+    setAssets(next.assets);
+    setNotice("Use-case template loaded. Review the placeholders, then apply it.");
+  };
+
+  return <section className="panel">
+    <div className="panel-heading"><div><span className="eyebrow">Advanced</span><h2>JSON schema editor</h2></div></div>
+    <div className="space-y-3 p-4">
+      <p className="text-[11px] leading-5 text-slate-500">Edit the complete conversation as JSON. Uploaded media is shown as a short <code className="rounded bg-slate-100 px-1 text-emerald-700">asset://image/1</code> placeholder; its full data stays intact and is restored when you apply, copy, or download.</p>
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-2.5">
+        <label className="mb-1 block text-[10px] font-bold uppercase tracking-wider text-emerald-800" htmlFor="use-case-template">Use-case template</label>
+        <div className="flex gap-2">
+          <select id="use-case-template" className="min-w-0 flex-1 rounded-lg border border-emerald-200 bg-white px-2 py-2 text-[11px] text-slate-700 outline-none" value={templatePath} onChange={(event) => setTemplatePath(event.target.value)}>
+            {USE_CASE_TEMPLATES.map((template) => <option key={template.path} value={template.path}>{template.label}</option>)}
+          </select>
+          <button type="button" className="mini-primary shrink-0" onClick={() => { loadTemplate().catch((error: unknown) => setNotice(error instanceof Error ? error.message : "Could not load the template.")); }}>Load template</button>
+        </div>
+        <p className="mt-1.5 text-[10px] leading-4 text-emerald-700">Template variables use the <code>{"{{VariableName}}"}</code> format. Replace them manually or keep them visible in your mockup.</p>
+      </div>
+      <textarea aria-label="Conversation JSON" spellCheck={false} className="h-[470px] w-full resize-y rounded-xl border border-slate-800 bg-slate-950 p-3 font-mono text-[10px] leading-4 text-emerald-300 outline-none focus:ring-2 focus:ring-emerald-300" value={raw} onChange={(event) => { setRaw(event.target.value); setNotice(""); }} />
+      <div className="grid grid-cols-2 gap-2">
+        <button type="button" className="secondary-button" onClick={refresh}>Refresh</button>
+        <button type="button" className="secondary-button" onClick={async () => { try { await navigator.clipboard.writeText(getFullJson()); setNotice("Full JSON copied with media included."); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON."); } }}><Copy size={14} /> Copy full JSON</button>
+        <button type="button" className="secondary-button" onClick={() => { try { download(); setNotice("Full JSON downloaded with media included."); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON."); } }}><Download size={14} /> Download full JSON</button>
+        <label className="secondary-button cursor-pointer"><Upload size={14} /> Import<input className="sr-only" type="file" accept="application/json,.json" onChange={async (event) => { const file = event.target.files?.[0]; if (file) { try { await importJson(file); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON file."); } } }} /></label>
+      </div>
+      <button type="button" className="primary-button w-full" onClick={() => { try { onApply(getFullJson()); setNotice("Conversation applied successfully; media data was preserved."); } catch (error) { setNotice(error instanceof Error ? error.message : "Invalid JSON."); } }}>Validate & apply JSON</button>
+      {notice && <div className={classes("rounded-xl px-3 py-2 text-[11px]", notice.includes("success") || notice.includes("copied") || notice.includes("downloaded") || notice.includes("refreshed") || notice.includes("imported") || notice.includes("loaded") ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-800")}>{notice}</div>}
+    </div>
+  </section>;
 }
 

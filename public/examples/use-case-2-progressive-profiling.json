@@ -1,0 +1,133 @@
+{
+  "version": 2,
+  "chatMeta": {
+    "contactName": "{{BrandName}}",
+    "statusLine": "Official business account"
+  },
+  "selectedMessageId": "pp-personalize",
+  "messages": [
+    {
+      "id": "pp-personalize",
+      "type": "quick_reply",
+      "from": "them",
+      "time": "11:00",
+      "status": "read",
+      "prompt": "Hello {{FirstName}}! Would you like to personalize your {{BrandName}} experience so we can share content that better matches your interests?",
+      "options": [
+        "✨ Yes, personalize it",
+        "Not right now"
+      ],
+      "selectedIndex": 0
+    },
+    {
+      "id": "pp-personalize-answer",
+      "type": "text",
+      "from": "me",
+      "time": "11:01",
+      "status": "read",
+      "text": "Yes, I'd like to personalize my experience."
+    },
+    {
+      "id": "pp-terms",
+      "type": "quick_reply",
+      "from": "them",
+      "time": "11:02",
+      "status": "read",
+      "prompt": "Before we continue, please review our Terms and Conditions: {{TermsAndConditionsUrl}}. Do you agree to the use of this information for personalization and marketing?",
+      "options": [
+        "✅ Yes, I agree",
+        "No, thank you"
+      ],
+      "selectedIndex": 0
+    },
+    {
+      "id": "pp-terms-answer",
+      "type": "text",
+      "from": "me",
+      "time": "11:03",
+      "status": "read",
+      "text": "Yes, I agree ✅"
+    },
+    {
+      "id": "pp-preferences-flow",
+      "type": "flow",
+      "from": "them",
+      "time": "11:04",
+      "status": "read",
+      "title": "Tell us about your cooking preferences",
+      "body": "Excellent! These four quick questions will help us recommend more relevant recipes and inspiration.",
+      "fields": [
+        {
+          "id": "pp-skill-level",
+          "label": "How would you rate your cooking skills?",
+          "required": true,
+          "fieldType": "radio",
+          "placeholder": "",
+          "options": [
+            "1 — Beginner",
+            "2",
+            "3 — Confident home cook",
+            "4",
+            "5 — Advanced"
+          ],
+          "selectedIndex": 2
+        },
+        {
+          "id": "pp-frequency",
+          "label": "How often do you cook each week?",
+          "required": true,
+          "fieldType": "radio",
+          "placeholder": "",
+          "options": [
+            "1–2 times",
+            "3–4 times",
+            "5–6 times",
+            "Every day"
+          ],
+          "selectedIndex": 1
+        },
+        {
+          "id": "pp-inspiration",
+          "label": "What cooking inspiration interests you most?",
+          "required": true,
+          "fieldType": "radio",
+          "placeholder": "",
+          "options": [
+            "Quick weekday meals",
+            "Healthy recipes",
+            "Family favorites",
+            "Baking and desserts",
+            "International cuisine"
+          ],
+          "selectedIndex": 0
+        },
+        {
+          "id": "pp-household-size",
+          "label": "How many people do you usually cook for?",
+          "required": true,
+          "fieldType": "number",
+          "placeholder": "{{HouseholdSize}}"
+        }
+      ],
+      "submitLabel": "Save preferences",
+      "submitted": true
+    },
+    {
+      "id": "pp-submitted",
+      "type": "text",
+      "from": "me",
+      "time": "11:06",
+      "status": "read",
+      "text": "I've submitted my preferences."
+    },
+    {
+      "id": "pp-thanks",
+      "type": "text",
+      "from": "them",
+      "time": "11:06",
+      "status": "read",
+      "text": "Thank you, {{FirstName}}! Your profile has been updated. We will use your preferences to share more relevant recipes, ideas, and marketing communications."
+    }
+  ]
+}
+

@@ -1,0 +1,97 @@
+{
+  "version": 2,
+  "chatMeta": {
+    "contactName": "{{BrandName}}",
+    "statusLine": "Official business account"
+  },
+  "selectedMessageId": "fpd-trigger",
+  "messages": [
+    {
+      "id": "fpd-trigger",
+      "type": "text",
+      "from": "me",
+      "time": "09:30",
+      "status": "read",
+      "text": "{{TriggerPhrase}}"
+    },
+    {
+      "id": "fpd-consent",
+      "type": "quick_reply",
+      "from": "them",
+      "time": "09:31",
+      "status": "read",
+      "prompt": "Hello! Thank you for connecting with {{BrandName}}. Would you like to receive personalized news, recipes, offers, and campaign updates? Please review our Terms and Conditions before subscribing: {{TermsAndConditionsUrl}}",
+      "options": [
+        "✅ Yes, I agree",
+        "No, thank you"
+      ],
+      "selectedIndex": 0
+    },
+    {
+      "id": "fpd-consent-answer",
+      "type": "text",
+      "from": "me",
+      "time": "09:32",
+      "status": "read",
+      "text": "Yes, I agree ✅"
+    },
+    {
+      "id": "fpd-profile-flow",
+      "type": "flow",
+      "from": "them",
+      "time": "09:33",
+      "status": "read",
+      "title": "Complete your profile",
+      "body": "Excellent! Please share a few details so we can personalize future communications.",
+      "fields": [
+        {
+          "id": "fpd-first-name",
+          "label": "First name",
+          "required": true,
+          "fieldType": "text",
+          "placeholder": "{{FirstName}}"
+        },
+        {
+          "id": "fpd-last-name",
+          "label": "Last name",
+          "required": true,
+          "fieldType": "text",
+          "placeholder": "{{LastName}}"
+        },
+        {
+          "id": "fpd-email",
+          "label": "Email address",
+          "required": true,
+          "fieldType": "email",
+          "placeholder": "{{EmailAddress}}"
+        },
+        {
+          "id": "fpd-date-of-birth",
+          "label": "Date of birth",
+          "required": true,
+          "fieldType": "date",
+          "placeholder": "{{DateOfBirth}}"
+        }
+      ],
+      "submitLabel": "Submit details",
+      "submitted": true
+    },
+    {
+      "id": "fpd-submitted",
+      "type": "text",
+      "from": "me",
+      "time": "09:35",
+      "status": "read",
+      "text": "I've submitted my details."
+    },
+    {
+      "id": "fpd-thanks",
+      "type": "text",
+      "from": "them",
+      "time": "09:35",
+      "status": "read",
+      "text": "Thank you for your interest, {{FirstName}}! Your preferences have been saved, and you will begin receiving relevant marketing communications soon. You can update your preferences or unsubscribe at any time."
+    }
+  ]
+}
+

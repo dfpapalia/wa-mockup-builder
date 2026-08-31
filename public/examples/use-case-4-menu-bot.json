@@ -1,0 +1,195 @@
+{
+  "version": 2,
+  "chatMeta": {
+    "contactName": "{{BrandName}} Assistant",
+    "statusLine": "Typically replies instantly"
+  },
+  "selectedMessageId": "menu-trigger",
+  "messages": [
+    {
+      "id": "menu-trigger",
+      "type": "text",
+      "from": "me",
+      "time": "16:00",
+      "status": "read",
+      "text": "{{TriggerPhrase}}"
+    },
+    {
+      "id": "menu-options",
+      "type": "list",
+      "from": "them",
+      "time": "16:01",
+      "status": "read",
+      "prompt": "Hello! Thank you for contacting {{BrandName}}. How can we help you today?",
+      "sectionTitle": "Main menu",
+      "buttonLabel": "View all options",
+      "items": [
+        {
+          "id": "menu-products",
+          "emoji": "🛍️",
+          "title": "Explore our products",
+          "description": "Discover featured products and offers"
+        },
+        {
+          "id": "menu-assistance",
+          "emoji": "🎧",
+          "title": "I need assistance",
+          "description": "Contact our customer support team"
+        },
+        {
+          "id": "menu-brand",
+          "emoji": "ℹ️",
+          "title": "About {{BrandName}}",
+          "description": "Learn more about our brand"
+        },
+        {
+          "id": "menu-policies",
+          "emoji": "📄",
+          "title": "Policies",
+          "description": "Privacy, terms, and data policies"
+        },
+        {
+          "id": "menu-subscribe",
+          "emoji": "✉️",
+          "title": "Subscribe",
+          "description": "Receive personalized news and offers"
+        }
+      ]
+    },
+    {
+      "id": "menu-products-response",
+      "type": "carousel",
+      "from": "them",
+      "time": "16:02",
+      "status": "read",
+      "intro": "Here are three products selected for you, {{FirstName}}:",
+      "cards": [
+        {
+          "id": "menu-product-one",
+          "imageUrl": "{{ProductOneImageUrl}}",
+          "title": "{{ProductOneName}}",
+          "body": "{{ProductOneDescription}}",
+          "ctaLabel": "View product",
+          "productUrl": "{{ProductOneUrl}}"
+        },
+        {
+          "id": "menu-product-two",
+          "imageUrl": "{{ProductTwoImageUrl}}",
+          "title": "{{ProductTwoName}}",
+          "body": "{{ProductTwoDescription}}",
+          "ctaLabel": "View product",
+          "productUrl": "{{ProductTwoUrl}}"
+        },
+        {
+          "id": "menu-product-three",
+          "imageUrl": "{{ProductThreeImageUrl}}",
+          "title": "{{ProductThreeName}}",
+          "body": "{{ProductThreeDescription}}",
+          "ctaLabel": "View product",
+          "productUrl": "{{ProductThreeUrl}}"
+        }
+      ]
+    },
+    {
+      "id": "menu-products-followup",
+      "type": "quick_reply",
+      "from": "them",
+      "time": "16:03",
+      "status": "read",
+      "prompt": "Is there anything else we can help you with?",
+      "options": [
+        "↩️ Back to the menu",
+        "✅ I don't need anything else"
+      ],
+      "selectedIndex": null
+    },
+    {
+      "id": "menu-support-response",
+      "type": "cta",
+      "from": "them",
+      "time": "16:04",
+      "status": "read",
+      "text": "Our customer support team will be happy to assist you. Call us during {{SupportOpeningHours}}.",
+      "buttons": [
+        {
+          "id": "menu-support-call",
+          "kind": "phone",
+          "label": "Call customer support",
+          "value": "{{CustomerSupportPhoneNumber}}"
+        }
+      ]
+    },
+    {
+      "id": "menu-support-followup",
+      "type": "quick_reply",
+      "from": "them",
+      "time": "16:05",
+      "status": "read",
+      "prompt": "Would you like to return to the main menu?",
+      "options": [
+        "↩️ Back to the menu",
+        "✅ I don't need anything else"
+      ],
+      "selectedIndex": null
+    },
+    {
+      "id": "menu-brand-response",
+      "type": "text",
+      "from": "them",
+      "time": "16:06",
+      "status": "read",
+      "text": "{{BrandDescription}}\n\nLearn more about our purpose and commitments at {{BrandWebsiteUrl}}."
+    },
+    {
+      "id": "menu-brand-followup",
+      "type": "quick_reply",
+      "from": "them",
+      "time": "16:07",
+      "status": "read",
+      "prompt": "Would you like to return to the main menu?",
+      "options": [
+        "↩️ Back to the menu",
+        "✅ I don't need anything else"
+      ],
+      "selectedIndex": null
+    },
+    {
+      "id": "menu-policies-response",
+      "type": "link",
+      "from": "them",
+      "time": "16:08",
+      "status": "read",
+      "url": "{{PoliciesUrl}}",
+      "title": "{{BrandName}} policies",
+      "description": "Review our privacy policy, Terms and Conditions, cookie policy, and data-protection information.",
+      "thumbnailUrl": "{{PoliciesImageUrl}}"
+    },
+    {
+      "id": "menu-policies-followup",
+      "type": "quick_reply",
+      "from": "them",
+      "time": "16:09",
+      "status": "read",
+      "prompt": "Would you like to return to the main menu?",
+      "options": [
+        "↩️ Back to the menu",
+        "✅ I don't need anything else"
+      ],
+      "selectedIndex": null
+    },
+    {
+      "id": "menu-subscribe-response",
+      "type": "quick_reply",
+      "from": "them",
+      "time": "16:10",
+      "status": "read",
+      "prompt": "Great! We can guide you through a short subscription flow to receive personalized news and offers. Would you like to begin?",
+      "options": [
+        "✉️ Start subscription",
+        "↩️ Back to the menu"
+      ],
+      "selectedIndex": null
+    }
+  ]
+}
+

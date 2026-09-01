@@ -5,27 +5,30 @@ import { JsonEditor, MessageEditor, Timeline } from "./Editor";
 import { PhonePreview } from "./Preview";
 import { STORAGE_KEY, createDefaultMessage, defaultState, loadState, parseState, type Message, type MessageType, type PersistedState } from "./model";
 
-function createVisiblePreviewSnapshot(source: HTMLElement) {
-  const bounds = source.getBoundingClientRect();
-  const snapshot = source.cloneNode(true) as HTMLElement;
-  snapshot.setAttribute("aria-hidden", "true");
-  snapshot.style.position = "fixed";
-  snapshot.style.left = `${-Math.ceil(bounds.width + 100)}px`;
-  snapshot.style.top = "0";
-  snapshot.style.width = `${bounds.width}px`;
-  snapshot.style.margin = "0";
-  snapshot.style.pointerEvents = "none";
+function freezeVisibleChat(source: HTMLElement) {
+  const chat = source.querySelector<HTMLElement>(".wa-wallpaper");
+  const messages = chat?.firstElementChild as HTMLElement | null;
+  if (!chat || !messages) return () => undefined;
 
-  const visibleChat = source.querySelector<HTMLElement>(".wa-wallpaper");
-  const snapshotChat = snapshot.querySelector<HTMLElement>(".wa-wallpaper");
-  const snapshotMessages = snapshotChat?.firstElementChild as HTMLElement | null;
-  if (visibleChat && snapshotChat && snapshotMessages) {
-    snapshotChat.style.overflow = "hidden";
-    snapshotMessages.style.transform = `translate(${-visibleChat.scrollLeft}px, ${-visibleChat.scrollTop}px)`;
-    snapshotMessages.style.transformOrigin = "top left";
-  }
+  const scrollTop = chat.scrollTop;
+  const scrollLeft = chat.scrollLeft;
+  const previousOverflow = chat.style.overflow;
+  const previousTransform = messages.style.transform;
+  const previousTransformOrigin = messages.style.transformOrigin;
 
-  return snapshot;
+  chat.scrollTop = 0;
+  chat.scrollLeft = 0;
+  chat.style.overflow = "hidden";
+  messages.style.transform = `translate(${-scrollLeft}px, ${-scrollTop}px)`;
+  messages.style.transformOrigin = "top left";
+
+  return () => {
+    messages.style.transform = previousTransform;
+    messages.style.transformOrigin = previousTransformOrigin;
+    chat.style.overflow = previousOverflow;
+    chat.scrollTop = scrollTop;
+    chat.scrollLeft = scrollLeft;
+  };
 }
 
 export default function App() {
@@ -61,17 +64,16 @@ export default function App() {
   const exportPng = async () => {
     if (!previewRef.current) return;
     setExporting(true);
-    const snapshot = createVisiblePreviewSnapshot(previewRef.current);
-    document.body.appendChild(snapshot);
+    const restoreVisibleChat = freezeVisibleChat(previewRef.current);
     try {
       await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-      const dataUrl = await toPng(snapshot, { cacheBust: true, pixelRatio: 2, backgroundColor: "#efeae2" });
+      const dataUrl = await toPng(previewRef.current, { cacheBust: true, pixelRatio: 2, backgroundColor: "#efeae2" });
       const anchor = document.createElement("a");
       anchor.href = dataUrl;
       anchor.download = "whatsapp-mockup.png";
       anchor.click();
     } finally {
-      snapshot.remove();
+      restoreVisibleChat();
       setExporting(false);
     }
   };
